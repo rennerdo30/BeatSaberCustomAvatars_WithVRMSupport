@@ -28,6 +28,9 @@
       <HintPath>..\..\Libraries\BSML.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="CombinedVRMDll">
+      <HintPath>..\..\ThirdParty\CombinedVRMDll.dll</HintPath>
+    </Reference>
     <Reference Include="DynamicBone">
       <HintPath>$(BeatSaberDir)\Beat Saber_Data\Managed\DynamicBone.dll</HintPath>
       <Private>false</Private>
