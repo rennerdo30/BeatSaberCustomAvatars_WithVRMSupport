@@ -30,6 +30,14 @@ namespace CustomAvatar.Avatar
 {
     public class AvatarPrefab : MonoBehaviour
     {
+        public enum AvatarFormat
+        {
+            AVATAR_FORMAT_CUSTOM,
+            AVATAR_FORMAT_VRM,
+        };
+
+        public AvatarFormat avatarFormat { get; set; }
+
         /// <summary>
         /// The name of the file from which the avatar was loaded.
         /// </summary>
@@ -153,7 +161,11 @@ namespace CustomAvatar.Avatar
                 CheckTargetWeight("Left Leg", leftLeg, vrikManager.solver_leftLeg_positionWeight, vrikManager.solver_leftLeg_rotationWeight);
                 CheckTargetWeight("Right Leg", rightLeg, vrikManager.solver_rightLeg_positionWeight, vrikManager.solver_rightLeg_rotationWeight);
 
-                FixTrackingReferences(vrikManager);
+                if (avatarFormat == AvatarFormat.AVATAR_FORMAT_CUSTOM)
+                {
+                    Debug.Log("Detected: Custom Avatar [not VRM]");
+                    //FixTrackingReferences(vrikManager);
+                }
             }
 
             if (transform.localPosition.sqrMagnitude > 0)

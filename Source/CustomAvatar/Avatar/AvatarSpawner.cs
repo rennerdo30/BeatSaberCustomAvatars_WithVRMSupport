@@ -90,13 +90,23 @@ namespace CustomAvatar.Avatar
             }
 
             GameObject avatarInstance = Object.Instantiate(avatar, parent, false).gameObject;
-            Object.DestroyImmediate(avatarInstance.GetComponent<AvatarPrefab>());
+            if (avatar.avatarFormat == AvatarPrefab.AvatarFormat.AVATAR_FORMAT_VRM)
+                avatarInstance.SetActive(true);
+
+            Object.Destroy(avatarInstance.GetComponent<AvatarPrefab>());
+            subContainer.QueueForInject(avatarInstance);
 
             var subContainer = new DiContainer(_container);
             subContainer.Bind<AvatarPrefab>().FromInstance(avatar);
             subContainer.Bind<IAvatarInput>().FromInstance(input);
 
             SpawnedAvatar spawnedAvatar = subContainer.InstantiateComponent<SpawnedAvatar>(avatarInstance);
+            spawnedAvatar.gameObject.SetActive(true);
+
+            var VRMFP = spawnedAvatar.GetComponentInChildren<VRM.VRMFirstPerson>();
+            if (VRMFP)
+                VRMFP.Setup();
+
             subContainer.Bind<SpawnedAvatar>().FromInstance(spawnedAvatar);
             subContainer.InjectGameObject(avatarInstance);
 

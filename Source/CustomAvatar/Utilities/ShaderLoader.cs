@@ -87,29 +87,6 @@ namespace CustomAvatar.Utilities
             }
 
             assetBundle.Unload(false);
-
-            Debug.Log("Load AssetBundle: univrm_shaders.assets");
-            //Shaders for VRM Avatars (General)
-            shadersBundleCreateRequest = await AssetBundle.LoadFromStreamAsync(Assembly.GetExecutingAssembly().GetManifestResourceStream("CustomAvatar.Resources.univrm_shaders.assets"));
-            assetBundle = shadersBundleCreateRequest.assetBundle;
-            assetBundleRequest = await assetBundle.LoadAllAssetsAsync<Shader>();
-            assetBundle = shadersBundleCreateRequest.assetBundle;
-            ExternalAssets.ExternalAssetsHelper.LoadExternalAssets(assetBundle);
-            assetBundle.Unload(false);
-
-            //Shaders for VRM Avatars (Beat Saber Specific)
-            Debug.Log("Load AssetBundle: vrmmaterialchange_bs_shaders.assets");
-            shadersBundleCreateRequest = await AssetBundle.LoadFromStreamAsync(Assembly.GetExecutingAssembly().GetManifestResourceStream("CustomAvatar.Resources.vrmmaterialchange_bs_shaders.assets"));
-            assetBundle = shadersBundleCreateRequest.assetBundle;
-            assetBundleRequest = await assetBundle.LoadAllAssetsAsync<Shader>();
-            assetBundle = shadersBundleCreateRequest.assetBundle;
-            ExternalAssets.ExternalAssetsHelper.LoadExternalAssets(assetBundle);
-            assetBundle.Unload(false);
-
-            //Shaders: Replace a General with Specific shader.
-            Shader result = ExternalAssets.ShaderHelper.Find("BeatSaber/MToon");
-            if (result)
-                ExternalAssets.ShaderHelper.AddExternalShader("VRM/MToon", result); //Replace "VRM/Toon" Shader with BeatSaber/MToon shader.
         }
 
         private void CheckShaderLoaded(Shader shader, string name)
