@@ -83,6 +83,7 @@ namespace CustomAvatar.Avatar
         private GameScenesManager _gameScenesManager;
 
         private FirstPersonExclusion[] _firstPersonExclusions;
+        private VRM.VRMFirstPerson _firstPersonExclusions_VRMAvatar = null;
         private Renderer[] _renderers;
         private EventManager _eventManager;
 
@@ -118,20 +119,23 @@ namespace CustomAvatar.Avatar
 
         public void SetFirstPersonVisibility(FirstPersonVisibility visibility)
         {
-            switch (visibility)
+            if (_firstPersonExclusions_VRMAvatar == null)
             {
-                case FirstPersonVisibility.Visible:
-                    SetChildrenToLayer(AvatarLayers.kAlwaysVisible);
-                    break;
+                switch (visibility)
+                {
+                    case FirstPersonVisibility.Visible:
+                        SetChildrenToLayer(AvatarLayers.kAlwaysVisible);
+                        break;
 
-                case FirstPersonVisibility.VisibleWithExclusionsApplied:
-                    SetChildrenToLayer(AvatarLayers.kAlwaysVisible);
-                    ApplyFirstPersonExclusions();
-                    break;
+                    case FirstPersonVisibility.VisibleWithExclusionsApplied:
+                        SetChildrenToLayer(AvatarLayers.kAlwaysVisible);
+                        ApplyFirstPersonExclusions();
+                        break;
 
-                case FirstPersonVisibility.Hidden:
-                    SetChildrenToLayer(AvatarLayers.kOnlyInThirdPerson);
-                    break;
+                    case FirstPersonVisibility.Hidden:
+                        SetChildrenToLayer(AvatarLayers.kOnlyInThirdPerson);
+                        break;
+                }
             }
         }
 
@@ -145,6 +149,18 @@ namespace CustomAvatar.Avatar
 
             _eventManager = GetComponent<EventManager>();
             _firstPersonExclusions = GetComponentsInChildren<FirstPersonExclusion>();
+            _firstPersonExclusions_VRMAvatar = GetComponentInChildren<VRM.VRMFirstPerson>();
+            Debug.Log("Awake(): FPV");
+            if (_firstPersonExclusions_VRMAvatar)
+            {
+                Debug.Log("Awake(): _firstPersonExclusions_VRMAvatar");
+
+                VRM.VRMFirstPerson.FIRSTPERSON_ONLY_LAYER = CustomAvatar.Avatar.AvatarLayers.kAlwaysVisible;
+                VRM.VRMFirstPerson.THIRDPERSON_ONLY_LAYER = CustomAvatar.Avatar.AvatarLayers.kOnlyInThirdPerson;
+               _firstPersonExclusions_VRMAvatar.Setup(); //VRM Avatar only.
+            }
+            Debug.Log("Awake(): DONE.");
+
             _renderers = GetComponentsInChildren<Renderer>();
 
             head = transform.Find("Head");

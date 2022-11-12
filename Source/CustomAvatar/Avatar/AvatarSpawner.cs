@@ -92,6 +92,9 @@ namespace CustomAvatar.Avatar
             var subContainer = new DiContainer(_container);
 
             GameObject avatarInstance = Object.Instantiate(avatar, parent, false).gameObject;
+            if (avatar.avatarFormat == AvatarPrefab.AvatarFormat.AVATAR_FORMAT_VRM)
+                avatarInstance.SetActive(true);
+
             Object.Destroy(avatarInstance.GetComponent<AvatarPrefab>());
             subContainer.QueueForInject(avatarInstance);
 
@@ -99,6 +102,11 @@ namespace CustomAvatar.Avatar
             subContainer.Bind<IAvatarInput>().FromInstance(input);
 
             SpawnedAvatar spawnedAvatar = subContainer.InstantiateComponent<SpawnedAvatar>(avatarInstance);
+            spawnedAvatar.gameObject.SetActive(true);
+
+            var VRMFP = spawnedAvatar.GetComponentInChildren<VRM.VRMFirstPerson>();
+            if (VRMFP)
+                VRMFP.Setup();
 
             subContainer.Bind<SpawnedAvatar>().FromInstance(spawnedAvatar);
 
