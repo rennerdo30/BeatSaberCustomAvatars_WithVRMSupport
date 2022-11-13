@@ -250,12 +250,12 @@ namespace CustomAvatar.Avatar
                 if (use == DeviceUse.LeftHand)
                 {
                     pose.rotation.eulerAngles += new Vector3(-40f, 0, 90f);
-                    pose.position += new Vector3(-0.10f, 0.0f, -0.06f); //(Down, ??, TowardsBody)
+                    //pose.position += new Vector3(-0.10f, 0.0f, -0.06f); //(Down, ??, TowardsBody)
                 }
                 if (use == DeviceUse.RightHand)
                 {
                     pose.rotation.eulerAngles += new Vector3(-40f, 0, -90f);
-                    pose.position += new Vector3(-0.10f, 0.0f, -0.06f); //(Down, ??, TowardsBody)
+                    //pose.position += new Vector3(-0.10f, 0.0f, -0.06f); //(Down, ??, TowardsBody)
                 }
             }
         }
