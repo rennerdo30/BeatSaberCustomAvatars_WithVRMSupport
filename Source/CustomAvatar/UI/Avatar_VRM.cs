@@ -120,17 +120,6 @@ namespace VRMAvatar
                 HandPositionConstants.ApplyToHand(ik.references_leftHand, false);
                 ik.solver_leftArm_target = leftHand.transform;
 
-                var leftHand_localPose = new GameObject("LeftHandLocalPose");
-                leftHand_localPose.transform.SetParent(avatar.transform);
-                leftHand_localPose.transform.eulerAngles = new Vector3(-40f, 0, -90f);
-
-
-
-                //var leftHandPalm = new GameObject("LeftHandPalm");
-                //leftHandPalm.transform.SetParent(leftHand.transform);
-                //ik.references_leftHand.transform.position = new Vector3(0.1f, 0.1f, 0.1f);
-                //ik.references_leftHand.transform.eulerAngles = new Vector3(-40f, 0, -90f);
-
                 var rightHand = new GameObject("RightHand");
                 rightHand.transform.position = ik.references_rightHand.position;
                 rightHand.transform.SetParent(avatar.transform);

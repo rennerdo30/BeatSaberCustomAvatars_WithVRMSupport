@@ -167,6 +167,7 @@ namespace CustomAvatar.Player
             }
 
             SpawnedAvatar spawnedAvatar = _avatarManager.currentlySpawnedAvatar;
+            spawnedAvatar.AvatarFormatSpecificPoseAdjustments(DeviceUse use, ref pose);
 
             switch (use)
             {
