@@ -167,7 +167,6 @@ namespace CustomAvatar.Player
             }
 
             SpawnedAvatar spawnedAvatar = _avatarManager.currentlySpawnedAvatar;
-            spawnedAvatar.AvatarFormatSpecificPoseAdjustments(DeviceUse use, ref pose);
 
             switch (use)
             {
@@ -350,7 +349,7 @@ namespace CustomAvatar.Player
                 return false;
             }
 
-            _beatSaberUtilities.AdjustPlatformSpecificControllerPose(use, ref pose);
+            _beatSaberUtilities.AdjustPlatformSpecificControllerPose(use, ref pose, _avatarManager.currentlySpawnedAvatar);
 
             return true;
         }

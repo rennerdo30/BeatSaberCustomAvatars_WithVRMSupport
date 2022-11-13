@@ -75,12 +75,21 @@ namespace CustomAvatar.Utilities
         /// <summary>
         /// Similar to the various implementations of <see cref="IVRPlatformHelper.AdjustControllerTransform(UnityEngine.XR.XRNode, Transform, Vector3, Vector3)"/> except it updates a pose instead of adjusting a transform.
         /// </summary>
-        public void AdjustPlatformSpecificControllerPose(DeviceUse use, ref Pose pose)
+        public void AdjustPlatformSpecificControllerPose(DeviceUse use, ref Pose pose, CustomAvatar.Avatar.SpawnedAvatar spawnedAvatar)
         {
             if (use != DeviceUse.LeftHand && use != DeviceUse.RightHand) return;
 
             Vector3 position = _mainSettingsModel.controllerPosition;
             Vector3 rotation = _mainSettingsModel.controllerRotation;
+
+            if(spawnedAvatar)
+                spawnedAvatar.AvatarFormatSpecificPoseAdjustments(use, ref pose);
+
+            // Z rotation isn't mirrored by the game for some reason
+            if (use == DeviceUse.LeftHand)
+            {
+                rotation.z = -rotation.z;
+            }
 
             if (_vrPlatformHelper is OculusVRHelper)
             {
