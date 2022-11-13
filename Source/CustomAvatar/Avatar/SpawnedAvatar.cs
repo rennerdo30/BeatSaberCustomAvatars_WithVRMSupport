@@ -241,5 +241,23 @@ namespace CustomAvatar.Avatar
                 }
             }
         }
+
+        public void AvatarFormatSpecificPoseAdjustments(DeviceUse use, ref Pose pose)
+        {
+            if(prefab.avatarFormat == AvatarPrefab.AvatarFormat.AVATAR_FORMAT_VRM)
+            {
+                //GR TEST: VRM.
+                if (use == DeviceUse.LeftHand)
+                {
+                    pose.rotation.eulerAngles += new Vector3(-40f, 0, 90f);
+                    pose.position += new Vector3(-0.10f, 0.0f, -0.06f); //(Down, ??, TowardsBody)
+                }
+                if (use == DeviceUse.RightHand)
+                {
+                    pose.rotation.eulerAngles += new Vector3(-40f, 0, -90f);
+                    pose.position += new Vector3(-0.10f, 0.0f, -0.06f); //(Down, ??, TowardsBody)
+                }
+            }
+        }
     }
 }
