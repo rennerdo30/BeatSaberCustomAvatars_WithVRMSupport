@@ -218,17 +218,27 @@ namespace VRMAvatar
                 ik.references_rightThigh.Rotate(new Vector3(-0.1f, 0f, 0f), Space.World);
                 ik.references_rightCalf.Rotate(new Vector3(0.1f, 0f, 0f), Space.World);
 
-                var leftHand = new GameObject("LeftHand"); //will be connected to Tracker by Name "LeftHand".
-                leftHand.transform.position = ik.references_leftHand.position;
-                leftHand.transform.SetParent(avatar.transform);
-                HandPositionConstants.ApplyToHand(ik.references_leftHand, false);
-                ik.solver_leftArm_target = leftHand.transform;
+                var cameraRig = new GameObject("_CameraRig_");
+                cameraRig.transform.SetParent(avatar.transform);
 
-                var rightHand = new GameObject("RightHand");
-                rightHand.transform.position = ik.references_rightHand.position;
-                rightHand.transform.SetParent(avatar.transform);
-                HandPositionConstants.ApplyToHand(ik.references_rightHand, true);
-                ik.solver_rightArm_target = rightHand.transform;
+                var controller_Left = new GameObject("_Controller_Left_");
+                controller_Left.transform.SetParent(cameraRig.transform);
+
+                var leftHandTarget = new GameObject("LeftHandTarget");
+                leftHandTarget.transform.SetParent(controller_Left.transform);
+                leftHandTarget.transform.position = new Vector3(-0.03f, 0.025f, -0.12f);
+                leftHandTarget.transform.eulerAngles = new Vector3(-40f, 0f, 90f);
+                HandPositionConstants.ApplyToHand(ik.references_leftHand, false); //curl fingers.
+
+                var controller_Right = new GameObject("_Controller_Right_");
+                controller_Right.transform.SetParent(cameraRig.transform);
+
+                var rightHandTarget = new GameObject("RightHandTarget");
+                rightHandTarget.transform.SetParent(controller_Right.transform);
+                HandPositionConstants.ApplyToHand(ik.references_rightHand, true); //curl fingers.
+
+                ik.solver_leftArm_target = leftHandTarget.transform;
+                ik.solver_rightArm_target = rightHandTarget.transform;
 
                 Transform vrmFirstPersonHeadBone = firstPerson.FirstPersonBone;
                 var vrmFirstPersonOffset = firstPerson.FirstPersonOffset;
@@ -242,6 +252,17 @@ namespace VRMAvatar
                 headViewpoint.transform.position = vrmFirstPersonHeadBone.position - vrmFirstPersonOffset;
 
                 ik.solver_spine_headTarget = headViewpoint.transform;
+
+                var leftHand = new GameObject("LeftHand");
+                leftHand.transform.SetParent(avatar.transform);
+                var rightHand_dummy = new GameObject("RightHand");
+                rightHand_dummy.transform.SetParent(avatar.transform);
+
+                //ik.solver_leftArm_target = leftHand.transform;
+
+
+                //ik.solver_leftArm_target = leftHand_dummy.transform;
+                //ik.solver_rightArm_target = rightHand_dummy.transform;
 
                 var descriptor = avatar.AddComponent<AvatarDescriptor>();
                 VRMMeta meta = instance.GetComponent<VRMMeta>();

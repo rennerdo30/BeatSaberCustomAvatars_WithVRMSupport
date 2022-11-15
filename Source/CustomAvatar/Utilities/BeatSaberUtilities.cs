@@ -90,45 +90,52 @@ namespace CustomAvatar.Utilities
             Vector3 position = _mainSettingsModel.controllerPosition;
             Vector3 rotation = _mainSettingsModel.controllerRotation;
 
-            if(spawnedAvatar)
-                spawnedAvatar.AvatarFormatSpecificPoseAdjustments(use, ref pose);
-
-            // Z rotation isn't mirrored by the game for some reason
-            if (use == DeviceUse.LeftHand)
+            //Debug.Log("AdjustPlatformSpecificControllerPose");
+            if (spawnedAvatar && spawnedAvatar.IsAvatarFormat_VRM())
             {
-                rotation.z = -rotation.z;
+                //Debug.Log("AdjustPlatformSpecificControllerPose : Spawned Avatar");
+                spawnedAvatar.AvatarFormatSpecific_SetControllerPosition(use, pose.position, pose.rotation.eulerAngles);
             }
-
-            if (_vrPlatformHelper is OculusVRHelper)
+            else
             {
-                rotation += new Vector3(-40f, 0f, 0f);
-                position += new Vector3(0f, 0f, 0.055f);
-            }
-            else if (_vrPlatformHelper is OpenVRHelper openVRHelper)
-            {
-                if (kVrControllerManufacturerNameGetter(openVRHelper) == OpenVRHelper.VRControllerManufacturerName.Valve)
+                // Z rotation isn't mirrored by the game for some reason
+                if (use == DeviceUse.LeftHand)
                 {
-                    rotation += new Vector3(-16.3f, 0f, 0f);
-                    position += new Vector3(0f, 0.022f, -0.01f);
+                    rotation.z = -rotation.z;
                 }
-                else
+
+                if (_vrPlatformHelper is OculusVRHelper)
                 {
-                    rotation += new Vector3(-4.3f, 0f, 0f);
-                    position += new Vector3(0f, -0.008f, 0f);
+                    rotation += new Vector3(-40f, 0f, 0f);
+                    position += new Vector3(0f, 0f, 0.055f);
                 }
-            }
+                else if (_vrPlatformHelper is OpenVRHelper openVRHelper)
+                {
+                    if (kVrControllerManufacturerNameGetter(openVRHelper) == OpenVRHelper.VRControllerManufacturerName.Valve)
+                    {
+                        rotation += new Vector3(-16.3f, 0f, 0f);
+                        position += new Vector3(0f, 0.022f, -0.01f);
+                    }
+                    else
+                    {
+                        rotation += new Vector3(-4.3f, 0f, 0f);
+                        position += new Vector3(0f, -0.008f, 0f);
+                    }
+                }
 
-            // mirror across YZ plane for left hand
-            if (use == DeviceUse.LeftHand)
-            {
-                rotation.y = -rotation.y;
-                rotation.z = -rotation.z;
+                // mirror across YZ plane for left hand
+                if (use == DeviceUse.LeftHand)
+                {
+                    rotation.y = -rotation.y;
+                    rotation.z = -rotation.z;
 
-                position.x = -position.x;
+                    position.x = -position.x;
+                }
             }
 
             pose.rotation *= Quaternion.Euler(rotation);
             pose.position += pose.rotation * position;
+            
         }
 
         private void OnRoomCenterChanged()

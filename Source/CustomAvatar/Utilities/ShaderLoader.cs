@@ -55,7 +55,6 @@ namespace CustomAvatar.Utilities
 
         private async Task LoadShaders()
         {
-            //Shaders for Custom Avatars
             AssetBundleCreateRequest shadersBundleCreateRequest = await AssetBundle.LoadFromStreamAsync(Assembly.GetExecutingAssembly().GetManifestResourceStream("CustomAvatar.Resources.shaders.assets"));
             AssetBundle assetBundle = shadersBundleCreateRequest.assetBundle;
 

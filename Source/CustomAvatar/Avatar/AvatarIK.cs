@@ -52,7 +52,7 @@ namespace CustomAvatar.Avatar
             }
         }
 
-        private VRIK _vrik;
+        public VRIK _vrik;
         private VRIKManager _vrikManager;
 
         private bool _fixTransforms;

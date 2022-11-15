@@ -82,6 +82,7 @@ namespace CustomAvatar.Avatar
         private ILogger<SpawnedAvatar> _logger;
         private GameScenesManager _gameScenesManager;
 
+        public bool IsAvatarFormat_VRM() { return _firstPersonExclusions_VRMAvatar != null; }
         private FirstPersonExclusion[] _firstPersonExclusions;
         private VRM.VRMFirstPerson _firstPersonExclusions_VRMAvatar = null;
         private Renderer[] _renderers;
@@ -242,22 +243,101 @@ namespace CustomAvatar.Avatar
             }
         }
 
-        public void AvatarFormatSpecificPoseAdjustments(DeviceUse use, ref Pose pose)
+        public void DebugPlotPositions(string tag, Transform transform)
         {
-            if(prefab.avatarFormat == AvatarPrefab.AvatarFormat.AVATAR_FORMAT_VRM)
+            Debug.Log($"Plotting Position {tag} : {transform.ToString()} : {transform.position.ToString()}");
+        }
+
+        public void AvatarFormatSpecific_SetControllerPosition(DeviceUse use, Vector3 position, Vector3 rotation)
+        {
+            var MainLeftHand = transform.Find("LeftHand");
+            DebugPlotPositions("LeftHand", MainLeftHand);
+
+            var ik = gameObject.GetComponentInChildren<VRIKManager>();
+            var _vrik = GetComponentInChildren<AvatarIK>();
+
+          //  Debug.Log("AvatarFormatSpecific_SetControllerPosition");
+            if (prefab.avatarFormat == AvatarPrefab.AvatarFormat.AVATAR_FORMAT_VRM)
             {
-                //GR TEST: VRM.
-                if (use == DeviceUse.LeftHand)
+               // Debug.Log("AvatarFormatSpecific_SetControllerPosition : VRM");
+
+                if (use == DeviceUse.LeftHand || use == DeviceUse.RightHand)
                 {
-                    pose.rotation.eulerAngles += new Vector3(-40f, 0, 90f);
-                    //pose.position += new Vector3(-0.10f, 0.0f, -0.06f); //(Down, ??, TowardsBody)
-                }
-                if (use == DeviceUse.RightHand)
-                {
-                    pose.rotation.eulerAngles += new Vector3(-40f, 0, -90f);
-                    //pose.position += new Vector3(-0.10f, 0.0f, -0.06f); //(Down, ??, TowardsBody)
+                    var cameraRig = transform.Find("_CameraRig_");
+                    if (cameraRig)
+                    {
+                        //Debug.Log("AvatarFormatSpecific_SetControllerPosition : VRM : Yes Camera");
+                        if (use == DeviceUse.LeftHand)
+                        {
+                            var controller = cameraRig.transform.Find("_Controller_Left_");
+                            if (controller)
+                            {
+                                DebugPlotPositions("_Controller_Left_ BEFORE", controller);
+
+                                //Debug.Log("AvatarFormatSpecific_SetControllerPosition : VRM : Yes Left Controller");
+                                controller.transform.eulerAngles = rotation;
+                                controller.transform.position = position;
+
+                                DebugPlotPositions("_Controller_Left_ AFTER", controller);
+                                Debug.Log($"new position {position.ToString()}");
+
+                                var leftHandTarget = controller.transform.Find("LeftHandTarget");
+                                DebugPlotPositions("LeftHandTarget", leftHandTarget);
+
+                                // var rightHandTarget = controller.transform.Find("RightHandTarget");
+                                if (leftHandTarget)
+                                {
+                                    //leftHandTarget = MainLeftHand;
+
+                                    if(_vrik)
+                                    {
+                                        //Debug.Log("Yes VRIK");
+                                        //Debug.Log($"{_vrik._vrik.solver.leftArm.target.ToString()} and {leftHandTarget.transform.ToString()}");
+                                        DebugPlotPositions("vrik LeftHand", _vrik._vrik.solver.leftArm.target);
+
+                                        // Debug.Log($"{_vrik._vrik.solver.rightArm.target.ToString()} and {rightHandTarget.transform.ToString()}");
+                                    }
+                                    else
+                                    {
+                                        Debug.Log("No VRIK");
+
+                                    }
+                                    if (ik)
+                                    {
+                                        //Debug.Log("Yes IK");
+                                        //leftHandTarget.transform.eulerAngles = rotation;
+                                        //leftHandTarget.transform.position = position;
+
+                                        //ik.solver_leftArm_target = leftHand.transform;
+                                        //ik.solver_rightArm_target = rightHand.transform;
+
+                                        //ik.Onup
+                                        //Debug.Log($"{ik.solver_leftArm_target.ToString()} and {leftHandTarget.transform.ToString()}");
+                                    }
+                                    else
+                                    {
+                                        Debug.Log("No IK");
+                                    }
+                                }
+                            }
+                        }
+                        if (use == DeviceUse.RightHand)
+                        {
+                            var controller = cameraRig.transform.Find("_Controller_Right_");
+                            if (controller)
+                            {
+                                Debug.Log("AvatarFormatSpecific_SetControllerPosition : VRM : Yes Right Controller");
+                                controller.transform.eulerAngles = rotation;
+                                controller.transform.position = position;
+                            }
+                        }
+                    }
                 }
             }
+            else
+                Debug.Log("AvatarFormatSpecific_SetControllerPosition : CUSTOM");
+
+
         }
     }
 }
