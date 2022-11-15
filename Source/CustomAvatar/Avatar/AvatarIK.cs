@@ -55,7 +55,7 @@ namespace CustomAvatar.Avatar
             }
         }
 
-        private VRIK _vrik;
+        public VRIK _vrik;
         private VRIKManager _vrikManager;
 
         private readonly List<BeatSaberDynamicBone::DynamicBone> _dynamicBones = new List<BeatSaberDynamicBone::DynamicBone>();
