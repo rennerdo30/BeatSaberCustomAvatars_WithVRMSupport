@@ -57,95 +57,123 @@ namespace VRMAvatar
             this.three = three;
         }
     }
-    class HandPositionConstants
-    {
-        public static Finger index = new Finger(
-                                                new Quaternion(0.008440408f, -0.001334298f, 0.2419432f, 0.9702529f),
-                                                new Quaternion(0.006469311f, -0.005582907f, 0.7170327f, 0.6969872f),
-                                                new Quaternion(0.005353101f, -0.006660718f, 0.8312484f, 0.5558357f)
-                                                );
-        public static Finger little = new Finger(
-                                                new Quaternion(0.008255607f, -0.00205866f, 0.241947f, 0.9702522f),
-                                                new Quaternion(0.005930441f, -0.006101066f, 0.7170366f, 0.6969836f),
-                                                new Quaternion(0.004364784f, -0.007303547f, 0.8583599f, 0.5129775f)
-                                                );
-        public static Finger middle = new Finger(
-                                                new Quaternion(0.008255607f, -0.00205866f, 0.241947f, 0.9702522f),
-                                                new Quaternion(0.005930441f, -0.006101066f, 0.7170366f, 0.6969836f),
-                                                new Quaternion(0.001539939f, -0.0083679f, 0.98344f, 0.1809834f)
-                                                );
-        public static Finger ring = new Finger(
-                                                new Quaternion(0.008255607f, -0.00205866f, 0.241947f, 0.9702522f),
-                                                new Quaternion(0.005930441f, -0.006101066f, 0.7170366f, 0.6969836f),
-                                                new Quaternion(0.002387176f, -0.008166672f, 0.9597998f, 0.2805563f)
-                                                );
-        public static Finger thumb = new Finger(
-                                                new Quaternion(0.5142931f, -0.0385387f, -0.02314265f, 0.8564355f),
-                                                new Quaternion(0.502104f, -0.1893172f, -0.1136858f, 0.8361376f),
-                                                new Quaternion(0.4902184f, -0.2618173f, -0.1572224f, 0.8163448f)
-                                                );
-        public static Vector3 handOffset = new Vector3(0.0873f, 0.0348f, 0f);
-
-        private static Quaternion Reflect(Quaternion quat, bool reflect)
+        class HandPositionConstants
         {
-            if (!reflect)
+            public static Finger index = new Finger(
+                                                    new Quaternion(0.008440408f, -0.001334298f, 0.2419432f, 0.9702529f),
+                                                    new Quaternion(0.006469311f, -0.005582907f, 0.7170327f, 0.6969872f),
+                                                    new Quaternion(0.005353101f, -0.006660718f, 0.8312484f, 0.5558357f)
+                                                    );
+            public static Finger little = new Finger(
+                                                    new Quaternion(0.008255607f, -0.00205866f, 0.241947f, 0.9702522f),
+                                                    new Quaternion(0.005930441f, -0.006101066f, 0.7170366f, 0.6969836f),
+                                                    new Quaternion(0.004364784f, -0.007303547f, 0.8583599f, 0.5129775f)
+                                                    );
+            public static Finger middle = new Finger(
+                                                    new Quaternion(0.008255607f, -0.00205866f, 0.241947f, 0.9702522f),
+                                                    new Quaternion(0.005930441f, -0.006101066f, 0.7170366f, 0.6969836f),
+                                                    new Quaternion(0.001539939f, -0.0083679f, 0.98344f, 0.1809834f)
+                                                    );
+            public static Finger ring = new Finger(
+                                                    new Quaternion(0.008255607f, -0.00205866f, 0.241947f, 0.9702522f),
+                                                    new Quaternion(0.005930441f, -0.006101066f, 0.7170366f, 0.6969836f),
+                                                    new Quaternion(0.002387176f, -0.008166672f, 0.9597998f, 0.2805563f)
+                                                    );
+            public static Finger thumb = new Finger(
+                                                    new Quaternion(0.5142931f, -0.0385387f, -0.02314265f, 0.8564355f),
+                                                    new Quaternion(0.502104f, -0.1893172f, -0.1136858f, 0.8361376f),
+                                                    new Quaternion(0.4902184f, -0.2618173f, -0.1572224f, 0.8163448f)
+                                                    );
+            private static Quaternion Reflect(Quaternion quat, bool reflect)
             {
-                return quat;
-            }
-            else
-            {
-                Quaternion temp = quat;
-                temp.z = -temp.z;
-                temp.y = -temp.y;
-                return temp;
-            }
-        }
-
-        public static void ApplyToHand(Transform hand, bool right)
-        {
-            if (hand == null)
-                return; //nothing can be done.
-
-            //NOTE: Hand rotation can't be done here as the Tracking Device is mapped directly to the hand, overwriting rotations.
-
-            int nFingers = 5;
-            if (hand.GetChildCount() < nFingers)
-                nFingers = hand.GetChildCount();
-
-            for (int i = 0; i < nFingers; i++)
-            {
-                Transform fingey = hand.GetChild(i);
-
-                if (fingey == null)
-                    continue; //nothing can be done.
-
-                Finger fingerThing = new Finger(Quaternion.identity, Quaternion.identity, Quaternion.identity);
-                switch (i)
+                if (!reflect)
                 {
-                    case 0:
-                        fingerThing = index;
-                        break;
-                    case 1:
-                        fingerThing = little;
-                        break;
-                    case 2:
-                        fingerThing = middle;
-                        break;
-                    case 3:
-                        fingerThing = ring;
-                        break;
-                    case 4:
-                        fingerThing = thumb;
-                        break;
-                    default:
-                        break;
+                    return quat;
                 }
-                fingey.rotation = Reflect(fingerThing.one, right);
-                fingey.GetChild(0).rotation = Reflect(fingerThing.two, right);
-                fingey.GetChild(0).GetChild(0).rotation = Reflect(fingerThing.three, right);
+                else
+                {
+                    Quaternion temp = quat;
+                    temp.z = -temp.z;
+                    temp.y = -temp.y;
+                    return temp;
+                }
+            }
+
+            public static Vector3 ApplyToHand(Transform hand, bool right)
+            {
+                Vector3 offsetBetweenWristAndGrip = new Vector3();
+                if (hand == null)
+                    return new Vector3(); //nothing can be done.
+
+                //NOTE: Hand rotation can't be done here as the Tracking Device is mapped directly to the hand, overwriting rotations.
+
+                int nFingers = 5;
+                if (hand.GetChildCount() < nFingers)
+                    nFingers = hand.GetChildCount();
+
+                float magnitude_hand_to_finger = 0.4f; //default:4cm.
+                float magnitude_indexfinger_beforeAfterRotation = 0.3f;//default: 3cm.
+                float magnitude_first_last_fingers = 0.11f; //default 11cm.
+
+                for (int i = 0; i < nFingers; i++)
+                {
+                    Transform fingey = hand.GetChild(i);
+
+                    if (fingey == null)
+                        continue; //nothing can be done.
+
+                    Finger fingerThing = new Finger(Quaternion.identity, Quaternion.identity, Quaternion.identity);
+                    switch (i)
+                    {
+                        case 0:
+                            magnitude_hand_to_finger = (hand.position - fingey.position).magnitude;
+                            fingerThing = index;
+                            break;
+                        case 1:
+                            fingerThing = little;
+                            break;
+                        case 2:
+                            fingerThing = middle;
+                            break;
+                        case 3:
+                            fingerThing = ring;
+                            break;
+                        case 4:
+                            fingerThing = thumb;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    try
+                    {
+                        Vector3 before = fingey.GetChild(0).GetChild(0).position;
+                        fingey.rotation = Reflect(fingerThing.one, right); //kuckle 1
+                        fingey.GetChild(0).rotation = Reflect(fingerThing.two, right); //knuckle 2
+                        fingey.GetChild(0).GetChild(0).rotation = Reflect(fingerThing.three, right); //knuckle 3
+                        Vector3 after = fingey.GetChild(0).GetChild(0).position;
+                        if (i == 0)
+                            magnitude_indexfinger_beforeAfterRotation = (before - after).magnitude;
+                        if(i == nFingers-1/*last is thumb*/)
+                        {
+                            magnitude_first_last_fingers = (hand.GetChild(0).position - hand.GetChild(i).position).magnitude;
+                        }
+                    }
+                    catch
+                    {
+
+                    }
+                }
+
+                /*calculate center of grip*/
+                float coeff = right ? 1 : -1;
+                offsetBetweenWristAndGrip.x = coeff * (magnitude_indexfinger_beforeAfterRotation/2);
+                offsetBetweenWristAndGrip.y = 0.75f*magnitude_hand_to_finger;
+                offsetBetweenWristAndGrip.z = -magnitude_first_last_fingers;
+
+                return offsetBetweenWristAndGrip;
             }
         }
-    }
 
         private async static Task<AvatarPrefab> LoadVRM(string path, IProgress<float> progress, CancellationToken cancellationToken, Dictionary<string, Task<AvatarPrefab>> tasks, DiContainer _container)
         {
@@ -218,26 +246,22 @@ namespace VRMAvatar
                 ik.references_rightThigh.Rotate(new Vector3(-0.1f, 0f, 0f), Space.World);
                 ik.references_rightCalf.Rotate(new Vector3(0.1f, 0f, 0f), Space.World);
 
-                var cameraRig = new GameObject("_CameraRig_");
-                cameraRig.transform.SetParent(avatar.transform);
-
-                var controller_Left = new GameObject("_Controller_Left_");
-                controller_Left.transform.SetParent(cameraRig.transform);
+                var leftHand = new GameObject("LeftHand");
+                leftHand.transform.SetParent(avatar.transform);
+                var rightHand = new GameObject("RightHand");
+                rightHand.transform.SetParent(avatar.transform);
 
                 var leftHandTarget = new GameObject("LeftHandTarget");
-                leftHandTarget.transform.SetParent(controller_Left.transform);
-                leftHandTarget.transform.position = new Vector3(-0.03f, 0.025f, -0.12f);
-                leftHandTarget.transform.eulerAngles = new Vector3(-40f, 0f, 90f);
-                HandPositionConstants.ApplyToHand(ik.references_leftHand, false); //curl fingers.
-
-                var controller_Right = new GameObject("_Controller_Right_");
-                controller_Right.transform.SetParent(cameraRig.transform);
+                leftHandTarget.transform.SetParent(leftHand.transform);
+                leftHandTarget.transform.eulerAngles = new Vector3(-10f, 0f, 90f); //rotate wrist to standard natural angle.
+                leftHandTarget.transform.position = HandPositionConstants.ApplyToHand(ik.references_leftHand, false); //curl fingers
+                //HandPositionConstants.ApplyToHand(ik.references_leftHand, false); //curl fingers.
+                ik.solver_leftArm_target = leftHandTarget.transform;
 
                 var rightHandTarget = new GameObject("RightHandTarget");
-                rightHandTarget.transform.SetParent(controller_Right.transform);
-                HandPositionConstants.ApplyToHand(ik.references_rightHand, true); //curl fingers.
-
-                ik.solver_leftArm_target = leftHandTarget.transform;
+                rightHandTarget.transform.SetParent(rightHand.transform);
+                rightHandTarget.transform.eulerAngles = new Vector3(-10f, 0f, -90f); //rotate wrist to standard natural angle.
+                rightHandTarget.transform.position = HandPositionConstants.ApplyToHand(ik.references_rightHand, true); //curl fingers.
                 ik.solver_rightArm_target = rightHandTarget.transform;
 
                 Transform vrmFirstPersonHeadBone = firstPerson.FirstPersonBone;
@@ -252,17 +276,6 @@ namespace VRMAvatar
                 headViewpoint.transform.position = vrmFirstPersonHeadBone.position - vrmFirstPersonOffset;
 
                 ik.solver_spine_headTarget = headViewpoint.transform;
-
-                var leftHand = new GameObject("LeftHand");
-                leftHand.transform.SetParent(avatar.transform);
-                var rightHand_dummy = new GameObject("RightHand");
-                rightHand_dummy.transform.SetParent(avatar.transform);
-
-                //ik.solver_leftArm_target = leftHand.transform;
-
-
-                //ik.solver_leftArm_target = leftHand_dummy.transform;
-                //ik.solver_rightArm_target = rightHand_dummy.transform;
 
                 var descriptor = avatar.AddComponent<AvatarDescriptor>();
                 VRMMeta meta = instance.GetComponent<VRMMeta>();

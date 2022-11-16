@@ -86,7 +86,7 @@ namespace CustomAvatar.Utilities
             if (spawnedAvatar && spawnedAvatar.IsAvatarFormat_VRM())
             {
                 //Debug.Log("AdjustPlatformSpecificControllerPose : Spawned Avatar");
-                spawnedAvatar.AvatarFormatSpecific_SetControllerPosition(use, pose.position, pose.rotation.eulerAngles);
+                //spawnedAvatar.AvatarFormatSpecific_SetControllerPosition(use, pose.position, pose.rotation.eulerAngles);
             }
             else
             {
