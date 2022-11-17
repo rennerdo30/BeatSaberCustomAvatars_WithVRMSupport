@@ -36,7 +36,7 @@ namespace CustomAvatar.Avatar
             AVATAR_FORMAT_VRM,
         };
 
-        public AvatarFormat avatarFormat { get; set; }
+        public AvatarFormat avatarFormat { get; private set; }
 
         /// <summary>
         /// The name of the file from which the avatar was loaded.
@@ -90,6 +90,7 @@ namespace CustomAvatar.Avatar
         {
             this.fullPath = fullPath ?? throw new ArgumentNullException(nameof(fullPath));
             descriptor = GetComponent<AvatarDescriptor>() ?? throw new AvatarLoadException($"Avatar at '{fullPath}' does not have an AvatarDescriptor");
+            avatarFormat = GetComponentInChildren<VRM.VRMFirstPerson>() ? AvatarFormat.AVATAR_FORMAT_VRM : AvatarFormat.AVATAR_FORMAT_CUSTOM;
 
             fileName = Path.GetFileName(fullPath);
 
@@ -163,8 +164,7 @@ namespace CustomAvatar.Avatar
 
                 if (avatarFormat == AvatarFormat.AVATAR_FORMAT_CUSTOM)
                 {
-                    Debug.Log("Detected: Custom Avatar [not VRM]");
-                    //FixTrackingReferences(vrikManager);
+                    FixTrackingReferences(vrikManager);
                 }
             }
 

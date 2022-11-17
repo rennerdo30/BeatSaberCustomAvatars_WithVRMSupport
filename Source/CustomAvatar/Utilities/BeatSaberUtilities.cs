@@ -82,13 +82,7 @@ namespace CustomAvatar.Utilities
             Vector3 position = _mainSettingsModel.controllerPosition;
             Vector3 rotation = _mainSettingsModel.controllerRotation;
 
-            //Debug.Log("AdjustPlatformSpecificControllerPose");
-            if (spawnedAvatar && spawnedAvatar.IsAvatarFormat_VRM())
-            {
-                //Debug.Log("AdjustPlatformSpecificControllerPose : Spawned Avatar");
-                //spawnedAvatar.AvatarFormatSpecific_SetControllerPosition(use, pose.position, pose.rotation.eulerAngles);
-            }
-            else
+            if (spawnedAvatar && spawnedAvatar.avatarFormat == Avatar.AvatarPrefab.AvatarFormat.AVATAR_FORMAT_CUSTOM)
             {
                 // Z rotation isn't mirrored by the game for some reason
                 if (use == DeviceUse.LeftHand)
@@ -123,11 +117,10 @@ namespace CustomAvatar.Utilities
 
                     position.x = -position.x;
                 }
-            }
 
-            pose.rotation *= Quaternion.Euler(rotation);
-            pose.position += pose.rotation * position;
-            
+                pose.rotation *= Quaternion.Euler(rotation);
+                pose.position += pose.rotation * position;
+            }
         }
 
         private void OnRoomCenterChanged()

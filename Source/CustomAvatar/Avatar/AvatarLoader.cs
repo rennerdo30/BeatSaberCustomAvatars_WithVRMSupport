@@ -117,7 +117,6 @@ namespace CustomAvatar.Avatar
                 var prefabObject = (GameObject)assetBundleRequest.asset;
                 AvatarPrefab avatarPrefab = _container.InstantiateComponent<AvatarPrefab>(prefabObject, new object[] { fullPath });
                 avatarPrefab.name = $"AvatarPrefab({avatarPrefab.descriptor.name})";
-                avatarPrefab.avatarFormat = AvatarPrefab.AvatarFormat.AVATAR_FORMAT_CUSTOM;
 
                 HandleSuccess(fullPath, avatarPrefab);
             }
@@ -216,7 +215,6 @@ namespace CustomAvatar.Avatar
 
             AvatarPrefab avatarPrefab = _container.InstantiateComponent<AvatarPrefab>(prefabObject, new object[] { fullPath });
             avatarPrefab.name = $"AvatarPrefab({avatarPrefab.descriptor.name})";
-            avatarPrefab.avatarFormat = AvatarPrefab.AvatarFormat.AVATAR_FORMAT_CUSTOM;
 
             _tasks.Remove(fullPath);
 
