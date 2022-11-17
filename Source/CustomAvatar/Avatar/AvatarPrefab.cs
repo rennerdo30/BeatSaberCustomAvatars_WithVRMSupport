@@ -281,13 +281,20 @@ namespace CustomAvatar.Avatar
                 return BeatSaberUtilities.kDefaultPlayerArmSpan;
             }
 
-            float leftArmLength = Vector3.Distance(leftShoulder.position, leftUpperArm.position) + Vector3.Distance(leftUpperArm.position, leftLowerArm.position) + Vector3.Distance(leftLowerArm.position, leftWrist.position) + Vector3.Distance(leftWrist.position, leftHand.position);
-            float rightArmLength = Vector3.Distance(rightShoulder.position, rightUpperArm.position) + Vector3.Distance(rightUpperArm.position, rightLowerArm.position) + Vector3.Distance(rightLowerArm.position, rightWrist.position) + Vector3.Distance(rightWrist.position, rightHand.position);
-            float shoulderToShoulderDistance = Vector3.Distance(leftShoulder.position, rightShoulder.position);
+            float totalLength = 0;
+            if (avatarFormat == AvatarFormat.AVATAR_FORMAT_VRM)
+            {
+                totalLength = Math.Abs((leftWrist.transform.position - rightWrist.transform.position).magnitude); //NOTE: VRM AvatarPrefab is in the 'T'-Pose.
+            }
+            else
+            {
+                float leftArmLength = Vector3.Distance(leftShoulder.position, leftUpperArm.position) + Vector3.Distance(leftUpperArm.position, leftLowerArm.position) + Vector3.Distance(leftLowerArm.position, leftWrist.position) + Vector3.Distance(leftWrist.position, leftHand.position);
+                float rightArmLength = Vector3.Distance(rightShoulder.position, rightUpperArm.position) + Vector3.Distance(rightUpperArm.position, rightLowerArm.position) + Vector3.Distance(rightLowerArm.position, rightWrist.position) + Vector3.Distance(rightWrist.position, rightHand.position);
+                float shoulderToShoulderDistance = Vector3.Distance(leftShoulder.position, rightShoulder.position);
 
-            float totalLength = leftArmLength + shoulderToShoulderDistance + rightArmLength;
-
-            _logger.Trace($"Measured arm span: {totalLength} m");
+                totalLength = leftArmLength + shoulderToShoulderDistance + rightArmLength;
+            }
+            _logger.Trace($"Measured avatar arm span: {totalLength} m");
 
             return totalLength;
         }

@@ -57,8 +57,8 @@ dotnet_style_coalesce_expression = true:warning
 dotnet_diagnostic.IDE0028.severity = suggestion
 dotnet_style_collection_initializer = true
 
-dotnet_diagnostic.IDE0033.severity = warning
-dotnet_style_explicit_tuple_names = true:warning
+dotnet_diagnostic.IDE0033.severity = error
+dotnet_style_explicit_tuple_names = true:error
 
 dotnet_diagnostic.IDE0031.severity = warning
 dotnet_style_null_propagation = true:warning
@@ -139,9 +139,9 @@ dotnet_diagnostic.IDE0100.severity = warning
 dotnet_diagnostic.IDE0110.severity = warning
 
 # IDE0076: SuppressMessageAttribute is invalid
-dotnet_diagnostic.IDE0076.severity = warning
+dotnet_diagnostic.IDE0076.severity = error
 # IDE0077: Avoid legacy format in SuppressMessageAttribute
-dotnet_diagnostic.IDE0077.severity = warning
+dotnet_diagnostic.IDE0077.severity = error
 
 #### C# Coding Conventions ####
 
@@ -218,8 +218,8 @@ dotnet_diagnostic.IDE0058.severity = none
 csharp_style_unused_value_expression_statement_preference = discard_variable:silent
 
 # 'using' directive preferences
-dotnet_diagnostic.IDE0065.severity = warning
-csharp_using_directive_placement = outside_namespace:warning
+dotnet_diagnostic.IDE0065.severity = error
+csharp_using_directive_placement = outside_namespace:error
 
 #### C# Formatting Rules ####
 
@@ -283,7 +283,7 @@ csharp_preserve_single_line_statements = true
 # https://docs.microsoft.com/en-us/dotnet/fundamentals/code-analysis/style-rules/naming-rules
 
 # IDE1006: Naming rule violation
-dotnet_diagnostic.IDE1006.severity = warning
+dotnet_diagnostic.IDE1006.severity = error
 
 # Naming rules
 
