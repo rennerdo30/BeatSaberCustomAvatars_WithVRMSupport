@@ -302,7 +302,6 @@ namespace VRMAvatar
             }
 
             AvatarPrefab avatarPrefab = _container.InstantiateComponent<AvatarPrefab>(obj, new object[] { path });
-            avatarPrefab.avatarFormat = AvatarPrefab.AvatarFormat.AVATAR_FORMAT_VRM;
             avatarPrefab.name = $"AvatarPrefab({avatarPrefab.descriptor.name})";
             avatarPrefab.gameObject.SetActive(false); //set the AvatarPrefab as Not Active [instantiated avatars will be set as active].
 
