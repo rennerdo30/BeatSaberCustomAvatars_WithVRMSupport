@@ -117,7 +117,7 @@ namespace CustomAvatar.Avatar
         public void SetFirstPersonVisibility(FirstPersonVisibility visibility)
         {
             if (avatarFormat == AvatarPrefab.AvatarFormat.AVATAR_FORMAT_CUSTOM)
-            { 
+            {
                 switch (visibility)
                 {
                     case FirstPersonVisibility.Visible:
@@ -134,9 +134,9 @@ namespace CustomAvatar.Avatar
                         break;
                 }
             }
-            else if(avatarFormat == AvatarPrefab.AvatarFormat.AVATAR_FORMAT_VRM)
+            else if (avatarFormat == AvatarPrefab.AvatarFormat.AVATAR_FORMAT_VRM)
             {
-                var vrmFirstPerson = GetComponentInChildren<VRM.VRMFirstPerson>();
+                VRM.VRMFirstPerson vrmFirstPerson = GetComponentInChildren<VRM.VRMFirstPerson>();
                 if (vrmFirstPerson)
                 {
                     VRM.VRMFirstPerson.FIRSTPERSON_ONLY_LAYER = CustomAvatar.Avatar.AvatarLayers.kAlwaysVisible;

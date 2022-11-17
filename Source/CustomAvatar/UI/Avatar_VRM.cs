@@ -3,13 +3,11 @@ using CustomAvatar.Avatar;
 using CustomAvatar.Player;
 using HarmonyLib;
 using IPA.Utilities;
-using RootMotion.FinalIK;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using UniGLTF;
@@ -44,19 +42,20 @@ namespace VRMAvatar
             }
         }
 
-            public struct Finger
-    {
-        public Quaternion one;
-        public Quaternion two;
-        public Quaternion three;
-
-        public Finger(Quaternion one, Quaternion two, Quaternion three)
+        public struct Finger
         {
-            this.one = one;
-            this.two = two;
-            this.three = three;
+            public Quaternion knuckleOne;
+            public Quaternion knuckleTwo;
+            public Quaternion knuckleThree;
+
+            public Finger(Quaternion knuckleOne, Quaternion knuckleTwo, Quaternion knuckleThree)
+            {
+                this.knuckleOne = knuckleOne;
+                this.knuckleTwo = knuckleTwo;
+                this.knuckleThree = knuckleThree;
+            }
         }
-    }
+
         class HandPositionConstants
         {
             public static Finger index = new Finger(
@@ -84,9 +83,9 @@ namespace VRMAvatar
                                                     new Quaternion(0.502104f, -0.1893172f, -0.1136858f, 0.8361376f),
                                                     new Quaternion(0.4902184f, -0.2618173f, -0.1572224f, 0.8163448f)
                                                     );
-            private static Quaternion Reflect(Quaternion quat, bool reflect)
+            private static Quaternion Reflect(Quaternion quat, bool bReflect)
             {
-                if (!reflect)
+                if (!bReflect)
                 {
                     return quat;
                 }
@@ -99,34 +98,37 @@ namespace VRMAvatar
                 }
             }
 
-            public static Vector3 ApplyToHand(Transform hand, bool right)
+            public static Vector3 ApplyToHand(Transform hand, bool bRightHand)
             {
-                Vector3 offsetBetweenWristAndGrip = new Vector3();
+                var offsetBetweenWristAndGrip = new Vector3();
                 if (hand == null)
                     return new Vector3(); //nothing can be done.
 
                 //NOTE: Hand rotation can't be done here as the Tracking Device is mapped directly to the hand, overwriting rotations.
 
                 int nFingers = 5;
-                if (hand.GetChildCount() < nFingers)
-                    nFingers = hand.GetChildCount();
+                if (hand.childCount < nFingers)
+                    nFingers = hand.childCount;
 
-                float magnitude_hand_to_finger = 0.4f; //default:4cm.
-                float magnitude_indexfinger_beforeAfterRotation = 0.3f;//default: 3cm.
+                float magnitude_hand_to_finger = 0.04f; //default:4cm.
+                float magnitude_indexfinger_beforeAfterRotation = 0.03f;//default: 3cm.
                 float magnitude_first_last_fingers = 0.11f; //default 11cm.
 
                 for (int i = 0; i < nFingers; i++)
                 {
-                    Transform fingey = hand.GetChild(i);
+                    Transform finger = hand.GetChild(i); //knuckle 1
 
-                    if (fingey == null)
+                    if (finger == null)
                         continue; //nothing can be done.
 
-                    Finger fingerThing = new Finger(Quaternion.identity, Quaternion.identity, Quaternion.identity);
+                    var knuckleTwo = finger.GetChild(0);
+                    var knuckleThree = knuckleTwo.GetChild(0) ?? null;
+
+                    var fingerThing = new Finger(Quaternion.identity, Quaternion.identity, Quaternion.identity);
                     switch (i)
                     {
                         case 0:
-                            magnitude_hand_to_finger = (hand.position - fingey.position).magnitude;
+                            magnitude_hand_to_finger = (hand.position - finger.position).magnitude;
                             fingerThing = index;
                             break;
                         case 1:
@@ -145,30 +147,26 @@ namespace VRMAvatar
                             break;
                     }
 
-                    try
-                    {
-                        Vector3 before = fingey.GetChild(0).GetChild(0).position;
-                        fingey.rotation = Reflect(fingerThing.one, right); //kuckle 1
-                        fingey.GetChild(0).rotation = Reflect(fingerThing.two, right); //knuckle 2
-                        fingey.GetChild(0).GetChild(0).rotation = Reflect(fingerThing.three, right); //knuckle 3
-                        Vector3 after = fingey.GetChild(0).GetChild(0).position;
-                        if (i == 0)
-                            magnitude_indexfinger_beforeAfterRotation = (before - after).magnitude;
-                        if(i == nFingers-1/*last is thumb*/)
-                        {
-                            magnitude_first_last_fingers = (hand.GetChild(0).position - hand.GetChild(i).position).magnitude;
-                        }
-                    }
-                    catch
-                    {
+                    Vector3 before = knuckleThree ? knuckleThree.position : new Vector3(0.0f,0.0f,0.0f);
+                    finger.rotation = Reflect(fingerThing.knuckleOne, bRightHand); //kuckle 1
+                    if(knuckleTwo)
+                        knuckleTwo.rotation = Reflect(fingerThing.knuckleTwo, bRightHand); //knuckle 2
+                    if(knuckleThree)
+                        knuckleThree.rotation = Reflect(fingerThing.knuckleThree, bRightHand); //knuckle 3
+                    Vector3 after = knuckleThree ? knuckleThree.position : new Vector3(0.0f, 0.0f, 0.03f);
+                    if (i == 0)
+                        magnitude_indexfinger_beforeAfterRotation = (before - after).magnitude;
 
+                    if (i == nFingers - 1/*last is thumb*/)
+                    {
+                        magnitude_first_last_fingers = (hand.GetChild(0).position - hand.GetChild(i).position).magnitude;
                     }
                 }
 
                 /*calculate center of grip*/
-                float coeff = right ? 1 : -1;
-                offsetBetweenWristAndGrip.x = coeff * (magnitude_indexfinger_beforeAfterRotation/2);
-                offsetBetweenWristAndGrip.y = 0.75f*magnitude_hand_to_finger;
+                float sign = bRightHand ? 1 : -1;
+                offsetBetweenWristAndGrip.x = sign * (magnitude_indexfinger_beforeAfterRotation / 2);
+                offsetBetweenWristAndGrip.y = 0.75f * magnitude_hand_to_finger;
                 offsetBetweenWristAndGrip.z = -magnitude_first_last_fingers;
 
                 return offsetBetweenWristAndGrip;
@@ -184,9 +182,9 @@ namespace VRMAvatar
             {
                 //Shaders for VRM Avatars (Beat Saber Specific)
                 Debug.Log("Load AssetBundle: vrmmaterialchange_bs_shaders.assets");
-                var shadersBundleCreateRequest = AssetBundle.LoadFromStreamAsync(Assembly.GetExecutingAssembly().GetManifestResourceStream("CustomAvatar.Resources.vrmmaterialchange_bs_shaders.assets"));
-                var assetBundle = shadersBundleCreateRequest.assetBundle;
-                var assetBundleRequest = assetBundle.LoadAllAssetsAsync<Shader>();
+                AssetBundleCreateRequest shadersBundleCreateRequest = AssetBundle.LoadFromStreamAsync(Assembly.GetExecutingAssembly().GetManifestResourceStream("CustomAvatar.Resources.vrmmaterialchange_bs_shaders.assets"));
+                AssetBundle assetBundle = shadersBundleCreateRequest.assetBundle;
+                AssetBundleRequest assetBundleRequest = assetBundle.LoadAllAssetsAsync<Shader>();
                 assetBundle = shadersBundleCreateRequest.assetBundle;
                 ExternalAssets.ExternalAssetsHelper.LoadExternalAssets(assetBundle);
                 assetBundle.Unload(false);
@@ -196,9 +194,11 @@ namespace VRMAvatar
                 if (result)
                     ExternalAssets.ShaderHelper.AddExternalShader("VRM/MToon", result); //Replace "VRM/Toon" Shader with BeatSaber/MToon shader.
 
+#if USE_VRM_10 //NOTE: Cannot use as VRM1.0 requires Shader MToon10, which has not yet been converted to Beatsaber [and thus is white-out'ed].
                 result = ExternalAssets.ShaderHelper.Find("VRM/UnlitTexture");
                 if (result)
                     ExternalAssets.ShaderHelper.AddExternalShader("VRM10/MToon10", result); //Replace "VRM/Toon" Shader with BeatSaber/MToon shader.
+#endif
             }
 
 #if USE_VRM_10 //NOTE: Cannot use as VRM1.0 requires Shader MToon10, which has not yet been converted to Beatsaber [and thus is white-out'ed].
@@ -211,14 +211,14 @@ namespace VRMAvatar
             VRM.VRMFirstPerson.FIRSTPERSON_ONLY_LAYER = CustomAvatar.Avatar.AvatarLayers.kAlwaysVisible;
             VRM.VRMFirstPerson.THIRDPERSON_ONLY_LAYER = CustomAvatar.Avatar.AvatarLayers.kOnlyInThirdPerson;
 
-            VrmUtility.MaterialGeneratorCallback materialCallback = (VRM.glTF_VRM_extensions vrm) => GetVrmMaterialGenerator(true, vrm);
+            IMaterialDescriptorGenerator materialCallback(VRM.glTF_VRM_extensions vrm) => GetVrmMaterialGenerator(true, vrm);
             RuntimeGltfInstance instance = await VrmUtility.LoadAsync(path, null, materialCallback);
 #endif
 
-            var firstPerson = instance.GetComponent<VRMFirstPerson>();
+            VRMFirstPerson firstPerson = instance.GetComponent<VRMFirstPerson>();
             firstPerson.Setup();
 
-            var animator = instance.GetComponent<Animator>();
+            Animator animator = instance.GetComponent<Animator>();
 
             GameObject obj = null;
 
@@ -237,7 +237,7 @@ namespace VRMAvatar
 #endif
                 //instance.gameObject.SetActive(false); //don't set the prefab object as active. it will be instantiated later.
 
-                var ik = instance.gameObject.AddComponent<VRIKManager>();
+                VRIKManager ik = instance.gameObject.AddComponent<VRIKManager>();
                 ik.AutoDetectReferences();
 
                 ik.references_leftThigh.Rotate(new Vector3(-0.1f, 0f, 0f), Space.World);
@@ -265,7 +265,7 @@ namespace VRMAvatar
                 ik.solver_rightArm_target = rightHandTarget.transform;
 
                 Transform vrmFirstPersonHeadBone = firstPerson.FirstPersonBone;
-                var vrmFirstPersonOffset = firstPerson.FirstPersonOffset;
+                Vector3 vrmFirstPersonOffset = firstPerson.FirstPersonOffset;
 
                 var head = new GameObject("Head");
                 head.transform.SetParent(avatar.transform);
@@ -277,7 +277,7 @@ namespace VRMAvatar
 
                 ik.solver_spine_headTarget = headViewpoint.transform;
 
-                var descriptor = avatar.AddComponent<AvatarDescriptor>();
+                AvatarDescriptor descriptor = avatar.AddComponent<AvatarDescriptor>();
                 VRMMeta meta = instance.GetComponent<VRMMeta>();
                 if (meta == null)
                 {

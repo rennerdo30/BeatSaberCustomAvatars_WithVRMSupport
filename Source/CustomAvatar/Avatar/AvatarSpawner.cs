@@ -99,7 +99,7 @@ namespace CustomAvatar.Avatar
 
             SpawnedAvatar spawnedAvatar = subContainer.InstantiateComponent<SpawnedAvatar>(avatarInstance);
             spawnedAvatar.avatarFormat = avatar.avatarFormat;
-            if(spawnedAvatar.avatarFormat == AvatarPrefab.AvatarFormat.AVATAR_FORMAT_VRM)
+            if (spawnedAvatar.avatarFormat == AvatarPrefab.AvatarFormat.AVATAR_FORMAT_VRM)
                 spawnedAvatar.gameObject.SetActive(true);
 
             subContainer.Bind<SpawnedAvatar>().FromInstance(spawnedAvatar);
