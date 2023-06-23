@@ -91,7 +91,6 @@ namespace CustomAvatar.Avatar
 
             GameObject avatarInstance = Object.Instantiate(avatar, parent, false).gameObject;
             Object.Destroy(avatarInstance.GetComponent<AvatarPrefab>());
-            subContainer.QueueForInject(avatarInstance);
 
             var subContainer = new DiContainer(_container);
             subContainer.Bind<AvatarPrefab>().FromInstance(avatar);
@@ -104,6 +103,7 @@ namespace CustomAvatar.Avatar
 
             subContainer.Bind<SpawnedAvatar>().FromInstance(spawnedAvatar);
             subContainer.InjectGameObject(avatarInstance);
+            //subContainer.QueueForInject(avatarInstance);
 
             foreach ((Type type, Func<AvatarPrefab, bool> condition) in _componentsToAdd)
             {

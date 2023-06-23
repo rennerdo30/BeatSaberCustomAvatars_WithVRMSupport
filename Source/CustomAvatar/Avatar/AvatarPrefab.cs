@@ -293,7 +293,8 @@ namespace CustomAvatar.Avatar
 
                 totalLength = leftArmLength + shoulderToShoulderDistance + rightArmLength;
             }
-            _logger.Trace($"Measured avatar arm span: {totalLength} m");
+
+            _logger.LogTrace($"Measured avatar arm span: {totalLength} m");
 
             return totalLength;
         }
